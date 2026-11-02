@@ -72,8 +72,6 @@
 *Шаг №2.2 Классы, атрибуты и методы*
 
 #[
-  // в ячейках: без абзацных отступов и выравнивания по ширине, длинные идентификаторы
-  // (camelCase) могут переноситься, поэтому текст не вылезает за границы ячеек
   #set par(first-line-indent: 0pt, hanging-indent: 0pt, justify: false, leading: 0.5em, spacing: 0.5em)
   #show regex("[a-z][A-Z]"): it => [#it.text.first()#sym.zws#it.text.last()]
   #table(
@@ -90,8 +88,10 @@
       [getFaculties(): _List\<Faculty\>_ \
       addFaculty(faculty: _Faculty_): _void_ \
       getFacultyByName(name: _String_): _Faculty_ \
-      getCompetition(): _Competition_ \
-      getShortfall(): _Places_],
+      getCompetitionSummary(): _CompetitionSummary_ \
+      getShortfall(): _Places_ \
+      getPassingScore(): _int_ \
+      getTotalParticipants(): _int_],
 
       [Faculty (Факультет) < CompetitionAnalyzable],
       [name: _String_ \
@@ -99,34 +99,39 @@
       specialities: _List\<Speciality\>_],
       [getSpecialities(): _List\<Speciality\>_ \
       addSpeciality(s: _Speciality_): _void_ \
-      getCompetition(): _Competition_ \
-      getShortfall(): _Places_],
+      getCompetitionSummary(): _CompetitionSummary_ \
+      getShortfall(): _Places_ \
+      getPassingScore(): _int_ \
+      getTotalParticipants(): _int_],
 
       [Speciality (Специальность) < CompetitionAnalyzable],
       [code: _String_ \
       name: _String_ \
       faculty: _Faculty_ \
       plan: _Places_ \
-      exams: _List\<SpecialityExam\>_],
+      exams: _List\<SpecialityExam\>_ \
+      competition: _Competition_],
       [getPlan(): _Places_ \
       getExams(): _List\<SpecialityExam\>_ \
       addExam(se: _SpecialityExam_): _void_ \
       getCompetition(): _Competition_ \
       getShortfall(): _Places_ \
       getPassingScore(): _int_ \
+      getTotalParticipants(): _int_ \
+      isProfileExam(e: _Exam_): _boolean_ \
       hasSameExams(other: _Speciality_): _boolean_],
 
-      [Places (План набора)],
+      [Places (Количество мест)],
       [year: _int_ \
-      budgetPlaces: _int_ \
-      paidPlaces: _int_],
-      [getBudgetPlaces(): _int_ \
-      getPaidPlaces(): _int_ \
-      setBudgetPlaces(n: _int_): _void_ \
-      setPaidPlaces(n: _int_): _void_ \
-      getFreeBudgetPlaces(): _int_ \
-      getFreePaidPlaces(): _int_ \
-      redistributeTo(other: _Places_, n: _int_): _void_],
+      budget: _int_ \
+      paid: _int_],
+      [getBudget(): _int_ \
+      getPaid(): _int_ \
+      setBudget(n: _int_): _void_ \
+      setPaid(n: _int_): _void_ \
+      getFreeBudget(): _int_ \
+      getFreePaid(): _int_ \
+      minus(other: _Places_): _Places_],
 
       [Exam (Экзамен)],
       [name: _String_ \
@@ -156,7 +161,8 @@
       getTotalScore(s: _Speciality_): _int_ \
       getProfileScore(s: _Speciality_): _int_ \
       isEligible(s: _Speciality_): _boolean_ \
-      getCompetitionStatus(s: _Speciality_): _CompetitionStatus_ \
+      getCompetitionStatus(s: _Speciality_, basis: _StudyBasis_): _CompetitionStatus_ \
+      getRank(s: _Speciality_, basis: _StudyBasis_): _int_ \
       transferTo(s: _Speciality_): _void_ \
       transferToPaid(s: _Speciality_): _void_],
 
@@ -171,7 +177,8 @@
       getSubmissionDate(): _Date_ \
       isSubmittedInTime(): _boolean_ \
       setStatus(s: _DocumentStatus_): _void_ \
-      getStatus(): _DocumentStatus_],
+      getStatus(): _DocumentStatus_ \
+      isAccepted(): _boolean_],
 
       [ExamResult (Результат экзамена)],
       [abiturient: _Abiturient_ \
@@ -198,22 +205,46 @@
       getReason(): _String_ \
       isWithinDeadline(): _boolean_],
 
-      [Competition (Конкурс)],
-      [competitionAnalyzing: _CompetitionAnalyzable_ \
-      passingScore: _int_ \
+      [Competition (Конкурс специальности) < CompetitionAnalyzable],
+      [speciality: _Speciality_ \
+      studyBasis: _StudyBasis_ \
       participants: _List\<Documents\>_ \
-      shortfall: _int_],
-      [getParticipants(): _List\<Documents\>_ \
-      calculatePassingScore(): _int_ \
+      /passingScore: _int_ \
+      /shortfall: _Places_],
+      [getSpeciality(): _Speciality_ \
+      getStudyBasis(): _StudyBasis_ \
+      getParticipants(): _List\<Documents\>_ \
+      getPassingScore(): _int_ \
+      getShortfall(): _Places_ \
+      getTotalParticipants(): _int_ \
+      getStatusFor(a: _Abiturient_): _CompetitionStatus_ \
+      getRankOf(a: _Abiturient_): _int_ \
       rankParticipants(): _List\<Documents\>_ \
-      getShortfall(): _int_ \
-      resolveTie(a: _Abiturient_, b: _Abiturient_, s: _Speciality_): _Abiturient_ \
-      isEligible(a: _Abiturient_, s: _Speciality_): _boolean_],
+      calculatePassingScore(): _int_ \
+      calculateShortfall(): _Places_ \
+      resolveTie(a: _Abiturient_, b: _Abiturient_): _Abiturient_ \
+      isEligible(a: _Abiturient_): _boolean_],
+
+      [CompetitionSummary (Сводка конкурса по уровню) < CompetitionAnalyzable],
+      [level: _AggregationLevel_ \
+      children: _List\<Competition\>_ \
+      /totalParticipants: _int_ \
+      /totalPassingScore: _int_ \
+      /totalShortfall: _Places_],
+      [getLevel(): _AggregationLevel_ \
+      getChildren(): _List\<Competition\>_ \
+      getPassingScore(): _int_ \
+      getShortfall(): _Places_ \
+      getTotalParticipants(): _int_ \
+      calculatePassingScore(): _int_ \
+      calculateShortfall(): _Places_ \
+      calculateTotalParticipants(): _int_],
 
       [TechnicalSecretary (Технический секретарь)],
       [fullName: _String_],
-      [registerAbiturient(a: Abiturient): _\<login: String, password: String>_ \
-      getCredentialsOf(a: Abiturient): _\<login: String, password: String>_],
+      [registerAbiturient(a: _Abiturient_): _void_ \
+      issueCredentials(a: _Abiturient_): _Credentials_ \
+      getCredentialsOf(a: _Abiturient_): _Credentials_],
 
       [AdmissionSecretary (Секретарь приёмной комиссии)],
       [fullName: _String_],
@@ -221,10 +252,14 @@
       redistributePlaces(from: _Places_, to: _Places_, n: _int_): _void_ \
       publishEnrollmentResults(s: _Speciality_): _void_],
 
-      [StudyBasis (Форма обучения) — _enumeration_],
-      [BUDGET \
-      PAID],
-      [—],
+      [Credentials (Учётные данные) _value object_],
+      [userId: _Long_ \
+      login: _String_ \
+      password: _String_],
+      [getUserId(): _Long_ \
+      getLogin(): _String_ \
+      getPassword(): _String_ \
+      regeneratePassword(): _String_],
     )
 ]
 #[
@@ -239,13 +274,14 @@
       [*Интерфейс*], [*Методы*], [*Реализуют*],
 
       [CompetitionAnalyzable],
-      [getCompetition(): _Competition_ \
-      getShortfall(): _Shortfall_],
-      [University, Faculty, Speciality],
+      [getShortfall(): _Places_ \
+      getPassingScore(): _int_ \
+      getTotalParticipants(): _int_],
+      [University, Faculty, Speciality, Competition, CompetitionSummary],
     )
 ]
 #table(
-  columns: (4.20fr, 6.40fr, 6.40fr),
+  columns: (4.40fr, 4.40fr, 6.40fr),
   inset: 5pt,
   stroke: 0.5pt + black,
   fill: (_, y) => if y == 0 { rgb("#e6e6e6") },
@@ -253,8 +289,28 @@
   [*Значения*],
   [*Откуда выделено*],
   [StudyBasis (форма обучения)],
-  [BUDGET (бюджет), PAID (внебюджет)],
+      [BUDGET \
+      PAID],
   [Существительные “бюджет”, “внебюджет” – два значения одной характеристики],
+  [DocumentStatus (статус заявления)],
+      [SUBMITTED \
+      ACCEPTED \
+      WITHDRAWN \
+      TRANSFERRED \
+      ENROLLED],
+  [Жизненный цикл заявления: подано, принято, отозвано, переведено, зачислено],
+  [CompetitionStatus (результат конкурса)],
+      [NOT_ELIGIBLE \
+      NOT_PASSING \
+      PASSING_BUDGET \
+      PASSING_PAID \
+      ENROLLED_BUDGET \
+      ENROLLED_PAID],
+  [Результат участия абитуриента в конкурсе],
+  [AggregationLevel (уровень агрегации)],
+      [FACULTY \
+      UNIVERSITY],
+  [Уровень сводки конкурса],
 )
 
 /*
