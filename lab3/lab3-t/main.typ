@@ -22,5 +22,8 @@
     contents_page: (
       enabled: true
     )
-  )
+  ),
 )
+
+#include "content/01_task.typ"
+#include "content/02_myvar.typ"
