@@ -5,39 +5,68 @@
 = #underline[*ШАГ №2 Построить диаграмму классов, указать, каким образом были получены атрибуты, ассоциации и операций из хранимой информации и действий. При разработке модели названия классам следует давать на английском языке, при этом должно быть понятно соответствие между классами и потенциальными классами. Также нужно дать пояснения по выделенным ассоциациям и кратностям их полюсов.*]
 
 *Шаг №2.1 Триплеты*
-
 Основные триплеты (#subj[подлежащее] – #pred[сказуемое (с прямым дополнением)] – #obj[дополнение]):
 #[
   #set enum(indent: 0em, numbering: "1.")
-  + #subj[Университет] #pred[включает] #obj[Факультет]
-  + #subj[Факультет] #pred[включает] #obj[Специальность]
-  + #subj[Специальность] #pred[имеет места в] #obj[План набора]
+  + #subj[Университет] #pred[включает в себя] #obj[Факультет]
+  + #subj[Факультет] #pred[включает в себя] #obj[Специальность]
+  + #subj[Специальность] #pred[имеет план] #obj[План набора]
+  // + #subj[План набора] #pred[определяет] #obj[форму обучения]
+  + #subj[План набора] #pred[содержит количество] #obj["бюджетные места"]
+  + #subj[План набора] #pred[содержит количество] #obj["внебюджетные места"]
   + #subj[Специальность] #pred[требует сдачи] #obj[Экзамен специальности]
-  + #subj[Экзамен специальности] #pred[относится к] #obj[Экзамен]
+  + #subj[Экзамен специальности] #pred[ссылается на] #obj[Экзамен]
+  + #subj[Экзамен специальности] #pred[имеет признак] #obj["профильный"]
+  + #subj[Экзамен] #pred[имеет дату сдачи] #obj["срок сдачи экзамена"]
+
+ о подаче документов и абитуриентах:
+
   + #subj[Абитуриент] #pred[подаёт] #obj[Документы]
   + #subj[Документы] #pred[подаются на] #obj[Специальность]
-  + #subj[Университет] #pred[устанавливает] #obj[Срок]
-  + #subj[Университет] #pred[назначает дату сдачи] #obj[Экзамен]
+  + #subj[Документы] #pred[имеют срок подачи] #obj["срок подачи документов"]
+  + #subj[Абитуриент] #pred[имеет] #obj["средний балл аттестата"]
   + #subj[Технический секретарь] #pred[регистрирует] #obj[Абитуриент]
-  + #subj[Технический секретарь] #pred[сообщает данные для авторизации] #obj[Абитуриент]
-  + #subj[Абитуриент] #pred[просматривает расписание] #obj[Экзамен]
+  + #subj[Технический секретарь] #pred[выдаёт данные для авторизации] #obj[Абитуриент]
+
+ о результатах экзаменов:
+
+  + #subj[Абитуриент] #pred[имеет] #obj[Результат экзамена]
+  + #subj[Результат экзамена] #pred[относится к] #obj[Экзамен]
+  + #subj[Результат экзамена] #pred[содержит] #obj["экзаменационный балл"]
+
+ о конкурсе и зачислении:
+
+  + #subj[Специальность] #pred[имеет] #obj[Конкурс]
+  + #subj[Конкурс] #pred[определяет] #obj["проходной балл"]
+  + #subj[Конкурс] #pred[определяет] #obj["недобор"]
+  + #subj[Конкурс] #pred[учитывает] #obj[Документы]
+  + #subj[Конкурс] #pred[учитывает] #obj[Результат экзамена]
+  + #subj[Конкурс] #pred[требует успешной сдачи] #obj["все экзамены не ниже 4 баллов"]
+  + #subj[Конкурс] #pred[ранжирует по] #obj["сумма баллов по экзаменам"]
+  + #subj[Конкурс] #pred[разрешает спор по] #obj["балл по профильному предмету"]
+  + #subj[Конкурс] #pred[разрешает спор по] #obj["средний балл аттестата"]
+  + #subj[Абитуриент] #pred[получает] #obj[Зачисление]
+  + #subj[Зачисление] #pred[производится на] #obj[Специальность]
+  + #subj[Зачисление] #pred[имеет] #obj[форму обучения]
+  + #subj[Зачисление] #pred[имеет срок] #obj["срок зачисления"]
+  + #subj[Секретарь приёмной комиссии] #pred[производит вручную] #obj[Зачисление]
+  + #subj[Зачисление] #pred[имеет] #obj["причина ручного зачисления"]
+  + #subj[Секретарь приёмной комиссии] #pred[перераспределяет] #obj[План набора]
+
+ о просмотре информации:
+
+  + #subj[Абитуриент] #pred[просматривает] #obj["расписание экзаменов"]
   + #subj[Абитуриент] #pred[просматривает] #obj[Результат экзамена]
-  + #subj[Абитуриент] #pred[проверяет прохождение по] #obj[Конкурс]
-  + #subj[Абитуриент] #pred[переводит Документы на другую] #obj[Специальность]
-  + #subj[Абитуриент] #pred[переводит Документы на внебюджет при наличии мест в] #obj[План набора]
+  + #subj[Абитуриент] #pred[просматривает] #obj[Конкурс]
+  + #subj[Абитуриент] #pred[переводится на] #obj[Специальность]
+  + #subj[Абитуриент] #pred[переводится на] #obj[форму обучения]
   + #subj[Абитуриент] #pred[просматривает] #obj[Зачисление]
-  + #subj[Абитуриент] #pred[просматривает проходные баллы и недобор] #obj[Конкурс]
-  + #subj[Конкурс] #pred[проводится на] #obj[Специальность]
-  + #subj[Конкурс] #pred[допускает после сдачи всех Экзаменов] #obj[Абитуриент]
-  + #subj[Результат экзамена] #pred[выставляется по] #obj[Экзамен]
-  + #subj[Конкурс] #pred[суммирует баллы] #obj[Результат экзамена]
-  + #subj[Конкурс] #pred[оформляет Зачисление для] #obj[Абитуриент]
-  + #subj[Конкурс] #pred[занимает места в] #obj[План набора]
-  + #subj[Конкурс] #pred[сравнивает баллы по профильному] #obj[Экзамен специальности]
-  + #subj[Конкурс] #pred[сравнивает средний балл аттестата] #obj[Абитуриент]
-  + #subj[Секретарь приёмной комиссии] #pred[вручную оформляет Зачисление для] #obj[Абитуриент]
-  + #subj[Секретарь приёмной комиссии] #pred[вводит причину в] #obj[Зачисление]
-  + #subj[Секретарь приёмной комиссии] #pred[перераспределяет места между] #obj[Специальность]
+  + #subj[Абитуриент] #pred[просматривает] #obj["проходной балл"]
+
+ об агрегации конкурса по уровням:
+  + #subj[Конкурс] #pred[рассчитывается для] #obj[Специальность]
+  + #subj[Конкурс] #pred[включает конкурс специальностей для] #obj[Факультет]
+  + #subj[Конкурс] #pred[включает конкурс факультетов для] #obj[Университет]
 ]
 
 *Шаг №2.2 Классы, атрибуты и методы*
@@ -54,79 +83,180 @@
       stroke: 0.5pt + black,
       fill: (_, y) => if y == 0 { rgb("#e6e6e6") },
       [*Класс*], [*Атрибуты*], [*Методы*],
-    [University (Университет)],
-    [—],
-    [setDeadline(type: _DeadlineType_, startDate: _Date_, endDate: _Date_): _Deadline_ \
-    scheduleExam(exam: _Exam_, date: _Date_): _void_],
-      [Faculty (Факультет)],
-    [name: _String_],
-    [—],
-      [Specialty (Специальность)],
-    [name: _String_],
-    [getExams(): _List\<SpecialtyExam\>_ \
-    getProfileExam(): _SpecialtyExam_],
-      [EnrollmentPlan (План набора)],
-    [budgetPlaces: _Integer_ \
-    paidPlaces: _Integer_ \
-    occupiedBudgetPlaces: _Integer_ \
-    occupiedPaidPlaces: _Integer_],
-    [getFreePlaces(basis: _StudyBasis_): _Integer_ \
-    occupyPlace(basis: _StudyBasis_): _void_ \
-    changePlaces(basis: _StudyBasis_, delta: _Integer_): _void_],
-      [SpecialtyExam (Экзамен специальности)],
-    [isProfile: _Boolean_],
-    [—],
+
+      [University (Университет) < CompetitionAnalyzable],
+      [name: _String_ \
+      faculties: _List\<Faculty\>_],
+      [getFaculties(): _List\<Faculty\>_ \
+      addFaculty(faculty: _Faculty_): _void_ \
+      getFacultyByName(name: _String_): _Faculty_ \
+      getCompetition(): _Competition_ \
+      getShortfall(): _Places_],
+
+      [Faculty (Факультет) < CompetitionAnalyzable],
+      [name: _String_ \
+      university: _University_ \
+      specialities: _List\<Speciality\>_],
+      [getSpecialities(): _List\<Speciality\>_ \
+      addSpeciality(s: _Speciality_): _void_ \
+      getCompetition(): _Competition_ \
+      getShortfall(): _Places_],
+
+      [Speciality (Специальность) < CompetitionAnalyzable],
+      [code: _String_ \
+      name: _String_ \
+      faculty: _Faculty_ \
+      plan: _Places_ \
+      exams: _List\<SpecialityExam\>_],
+      [getPlan(): _Places_ \
+      getExams(): _List\<SpecialityExam\>_ \
+      addExam(se: _SpecialityExam_): _void_ \
+      getCompetition(): _Competition_ \
+      getShortfall(): _Places_ \
+      getPassingScore(): _int_ \
+      hasSameExams(other: _Speciality_): _boolean_],
+
+      [Places (План набора)],
+      [year: _int_ \
+      budgetPlaces: _int_ \
+      paidPlaces: _int_],
+      [getBudgetPlaces(): _int_ \
+      getPaidPlaces(): _int_ \
+      setBudgetPlaces(n: _int_): _void_ \
+      setPaidPlaces(n: _int_): _void_ \
+      getFreeBudgetPlaces(): _int_ \
+      getFreePaidPlaces(): _int_ \
+      redistributeTo(other: _Places_, n: _int_): _void_],
+
       [Exam (Экзамен)],
-    [name: _String_ \
-    examDate: _Date_],
-    [—],
-      [Applicant (Абитуриент)],
-    [fullName: _String_ \
-    averageCertificateScore: _Double_ \
-    login: _String_ \
-    passwordHash: _String_],
-    [submitDocuments(specialty: _Specialty_, basis: _StudyBasis_): _Application_ \
-    viewExamSchedule(): _List\<Exam\>_ \
-    viewExamResults(): _List\<ExamResult\>_ \
-    checkCompetitionStatus(): _Boolean_ \
-    transferToSpecialty(newSpecialty: _Specialty_): _void_ \
-    transferToPaid(): _void_ \
-    viewCompetition(basis: _StudyBasis_): _Competition_ \
-    viewEnrollment(): _Enrollment_],
-      [Application (Документы)],
-    [submissionDate: _Date_ \
-    basis: _StudyBasis_],
-    [—],
-      [Deadline (Срок)],
-    [type: _DeadlineType_ \
-    startDate: _Date_ \
-    endDate: _Date_],
-    [—],
-      [TechnicalSecretary (Технический секретарь)],
-    [—],
-    [registerApplicant(fullName: _String_, averageCertificateScore: _Double_): _Applicant_ \
-    issueCredentials(applicant: _Applicant_): _void_],
+      [name: _String_ \
+      examDate: _Date_],
+      [getName(): _String_ \
+      getDate(): _Date_ \
+      setDate(d: _Date_): _void_],
+
+      [SpecialityExam (Экзамен специальности)],
+      [speciality: _Speciality_ \
+      exam: _Exam_ \
+      isProfile: _boolean_],
+      [getExam(): _Exam_ \
+      isProfile(): _boolean_ \
+      setProfile(flag: _boolean_): _void_],
+
+      [Abiturient (Абитуриент)],
+      [fullName: _String_ \
+      averageMark: _double_ \
+      documents: _List\<Documents\>_ \
+      results: _List\<ExamResult\>_],
+      [getDocuments(): _List\<Documents\>_ \
+      submitDocuments(s: _Speciality_): _Documents_ \
+      withdrawDocuments(d: _Documents_): _void_ \
+      getResults(): _List\<ExamResult\>_ \
+      addResult(r: _ExamResult_): _void_ \
+      getTotalScore(s: _Speciality_): _int_ \
+      getProfileScore(s: _Speciality_): _int_ \
+      isEligible(s: _Speciality_): _boolean_ \
+      getCompetitionStatus(s: _Speciality_): _CompetitionStatus_ \
+      transferTo(s: _Speciality_): _void_ \
+      transferToPaid(s: _Speciality_): _void_],
+
+      [Documents (Документы / заявление)],
+      [abiturient: _Abiturient_ \
+      speciality: _Speciality_ \
+      submissionDate: _Date_ \
+      submissionDeadline: _Date_ \
+      status: _DocumentStatus_],
+      [getAbiturient(): _Abiturient_ \
+      getSpeciality(): _Speciality_ \
+      getSubmissionDate(): _Date_ \
+      isSubmittedInTime(): _boolean_ \
+      setStatus(s: _DocumentStatus_): _void_ \
+      getStatus(): _DocumentStatus_],
+
       [ExamResult (Результат экзамена)],
-    [score: _Integer_],
-    [isPassed(minScore: _Integer_): _Boolean_],
-      [Competition (Конкурс)],
-    [basis: _StudyBasis_ \
-    passingScore: _Integer_ \
-    shortfall: _Integer_],
-    [isAdmitted(applicant: _Applicant_, minScore: _Integer_): _Boolean_ \
-    calculateTotalScore(applicant: _Applicant_): _Integer_ \
-    compare(a: _Applicant_, b: _Applicant_): _Integer_ \
-    conductEnrollment(minScore: _Integer_): _List\<Enrollment\>_],
+      [abiturient: _Abiturient_ \
+      exam: _Exam_ \
+      score: _int_],
+      [getAbiturient(): _Abiturient_ \
+      getExam(): _Exam_ \
+      getScore(): _int_ \
+      setScore(v: _int_): _void_ \
+      isPassed(): _boolean_],
+
       [Enrollment (Зачисление)],
-    [isManual: _Boolean_ \
-    reason: _String_],
-    [—],
-      [CommitteeSecretary (Секретарь приёмной комиссии)],
-    [—],
-    [enrollManually(applicant: _Applicant_, reason: _String_): _Enrollment_ \
-    redistributePlaces(source: _Specialty_, target: _Specialty_, basis: _StudyBasis_, count: _Integer_): _void_],
+      [abiturient: _Abiturient_ \
+      speciality: _Speciality_ \
+      studyBasis: _StudyBasis_ \
+      enrollmentDate: _Date_ \
+      enrollmentDeadline: _Date_ \
+      isManual: _boolean_ \
+      reason: _String_],
+      [getAbiturient(): _Abiturient_ \
+      getSpeciality(): _Speciality_ \
+      getStudyBasis(): _StudyBasis_ \
+      isManual(): _boolean_ \
+      getReason(): _String_ \
+      isWithinDeadline(): _boolean_],
+
+      [Competition (Конкурс)],
+      [competitionAnalyzing: _CompetitionAnalyzable_ \
+      passingScore: _int_ \
+      participants: _List\<Documents\>_ \
+      shortfall: _int_],
+      [getParticipants(): _List\<Documents\>_ \
+      calculatePassingScore(): _int_ \
+      rankParticipants(): _List\<Documents\>_ \
+      getShortfall(): _int_ \
+      resolveTie(a: _Abiturient_, b: _Abiturient_, s: _Speciality_): _Abiturient_ \
+      isEligible(a: _Abiturient_, s: _Speciality_): _boolean_],
+
+      [TechnicalSecretary (Технический секретарь)],
+      [fullName: _String_],
+      [registerAbiturient(a: Abiturient): _\<login: String, password: String>_ \
+      getCredentialsOf(a: Abiturient): _\<login: String, password: String>_],
+
+      [AdmissionSecretary (Секретарь приёмной комиссии)],
+      [fullName: _String_],
+      [manualEnroll(a: _Abiturient_, s: _Speciality_, basis: _StudyBasis_, reason: _String_): _Enrollment_ \
+      redistributePlaces(from: _Places_, to: _Places_, n: _int_): _void_ \
+      publishEnrollmentResults(s: _Speciality_): _void_],
+
+      [StudyBasis (Форма обучения) — _enumeration_],
+      [BUDGET \
+      PAID],
+      [—],
     )
 ]
+#[
+  #set par(first-line-indent: 0pt, hanging-indent: 0pt, justify: false, leading: 0.5em, spacing: 0.5em)
+  #show regex("[a-z][A-Z]"): it => [#it.text.first()#sym.zws#it.text.last()]
+  #table(
+      columns: (3.9fr, 5.0fr, 8.6fr),
+      inset: (x: 4pt, y: 3pt),
+      align: left + top,
+      stroke: 0.5pt + black,
+      fill: (_, y) => if y == 0 { rgb("#e6e6e6") },
+      [*Интерфейс*], [*Методы*], [*Реализуют*],
+
+      [CompetitionAnalyzable],
+      [getCompetition(): _Competition_ \
+      getShortfall(): _Shortfall_],
+      [University, Faculty, Speciality],
+    )
+]
+#table(
+  columns: (4.20fr, 6.40fr, 6.40fr),
+  inset: 5pt,
+  stroke: 0.5pt + black,
+  fill: (_, y) => if y == 0 { rgb("#e6e6e6") },
+  [*Перечисление*],
+  [*Значения*],
+  [*Откуда выделено*],
+  [StudyBasis (форма обучения)],
+  [BUDGET (бюджет), PAID (внебюджет)],
+  [Существительные “бюджет”, “внебюджет” – два значения одной характеристики],
+)
+
 /*
 *Шаг №2.3 Ассоциации и кратности полюсов*
 
