@@ -48,86 +48,86 @@
   #set par(first-line-indent: 0pt, hanging-indent: 0pt, justify: false, leading: 0.5em, spacing: 0.5em)
   #show regex("[a-z][A-Z]"): it => [#it.text.first()#sym.zws#it.text.last()]
   #table(
-      columns: (3.4fr, 5.0fr, 8.6fr),
+      columns: (3.9fr, 5.0fr, 8.6fr),
       inset: (x: 4pt, y: 3pt),
       align: left + top,
       stroke: 0.5pt + black,
       fill: (_, y) => if y == 0 { rgb("#e6e6e6") },
       [*Класс*], [*Атрибуты*], [*Методы*],
-      [Университет (University)],
-    [_—_],
-    [_setDeadline(type: DeadlineType, startDate: Date, endDate: Date): Deadline_ \
-    _scheduleExam(exam: Exam, date: Date): void_],
-      [Факультет (Faculty)],
-    [_name: String_],
-    [_—_],
-      [Специальность (Specialty)],
-    [_name: String_],
-    [_getExams(): List\<SpecialtyExam\>_ \
-    _getProfileExam(): SpecialtyExam_],
-      [План набора (EnrollmentPlan)],
-    [_budgetPlaces: Integer_ \
-    _paidPlaces: Integer_ \
-    _occupiedBudgetPlaces: Integer_ \
-    _occupiedPaidPlaces: Integer_],
-    [_getFreePlaces(basis: StudyBasis): Integer_ \
-    _occupyPlace(basis: StudyBasis): void_ \
-    _changePlaces(basis: StudyBasis, delta: Integer): void_],
-      [Экзамен специальности (SpecialtyExam)],
-    [_isProfile: Boolean_],
-    [_—_],
-      [Экзамен (Exam)],
-    [_name: String_ \
-    _examDate: Date_],
-    [_—_],
-      [Абитуриент (Applicant)],
-    [_fullName: String_ \
-    _averageCertificateScore: Double_ \
-    _login: String_ \
-    _passwordHash: String_],
-    [_submitDocuments(specialty: Specialty, basis: StudyBasis): Application_ \
-    _viewExamSchedule(): List\<Exam\>_ \
-    _viewExamResults(): List\<ExamResult\>_ \
-    _checkCompetitionStatus(): Boolean_ \
-    _transferToSpecialty(newSpecialty: Specialty): void_ \
-    _transferToPaid(): void_ \
-    _viewCompetition(basis: StudyBasis): Competition_ \
-    _viewEnrollment(): Enrollment_],
-      [Документы (Application)],
-    [_submissionDate: Date_ \
-    _basis: StudyBasis_],
-    [_—_],
-      [Срок (Deadline)],
-    [_type: DeadlineType_ \
-    _startDate: Date_ \
-    _endDate: Date_],
-    [_—_],
-      [Технический секретарь (TechnicalSecretary)],
-    [_—_],
-    [_registerApplicant(fullName: String, averageCertificateScore: Double): Applicant_ \
-    _issueCredentials(applicant: Applicant): void_],
-      [Результат экзамена (ExamResult)],
-    [_score: Integer_],
-    [_isPassed(minScore: Integer): Boolean_],
-      [Конкурс (Competition)],
-    [_basis: StudyBasis_ \
-    _passingScore: Integer_ \
-    _shortfall: Integer_],
-    [_isAdmitted(applicant: Applicant, minScore: Integer): Boolean_ \
-    _calculateTotalScore(applicant: Applicant): Integer_ \
-    _compare(a: Applicant, b: Applicant): Integer_ \
-    _conductEnrollment(minScore: Integer): List\<Enrollment\>_],
-      [Зачисление (Enrollment)],
-    [_isManual: Boolean_ \
-    _reason: String_],
-    [_—_],
-      [Секретарь приёмной комиссии (CommitteeSecretary)],
-    [_—_],
-    [_enrollManually(applicant: Applicant, reason: String): Enrollment_ \
-    _redistributePlaces(source: Specialty, target: Specialty, basis: StudyBasis, count: Integer): void_],
+    [University (Университет)],
+    [—],
+    [setDeadline(type: _DeadlineType_, startDate: _Date_, endDate: _Date_): _Deadline_ \
+    scheduleExam(exam: _Exam_, date: _Date_): _void_],
+      [Faculty (Факультет)],
+    [name: _String_],
+    [—],
+      [Specialty (Специальность)],
+    [name: _String_],
+    [getExams(): _List\<SpecialtyExam\>_ \
+    getProfileExam(): _SpecialtyExam_],
+      [EnrollmentPlan (План набора)],
+    [budgetPlaces: _Integer_ \
+    paidPlaces: _Integer_ \
+    occupiedBudgetPlaces: _Integer_ \
+    occupiedPaidPlaces: _Integer_],
+    [getFreePlaces(basis: _StudyBasis_): _Integer_ \
+    occupyPlace(basis: _StudyBasis_): _void_ \
+    changePlaces(basis: _StudyBasis_, delta: _Integer_): _void_],
+      [SpecialtyExam (Экзамен специальности)],
+    [isProfile: _Boolean_],
+    [—],
+      [Exam (Экзамен)],
+    [name: _String_ \
+    examDate: _Date_],
+    [—],
+      [Applicant (Абитуриент)],
+    [fullName: _String_ \
+    averageCertificateScore: _Double_ \
+    login: _String_ \
+    passwordHash: _String_],
+    [submitDocuments(specialty: _Specialty_, basis: _StudyBasis_): _Application_ \
+    viewExamSchedule(): _List\<Exam\>_ \
+    viewExamResults(): _List\<ExamResult\>_ \
+    checkCompetitionStatus(): _Boolean_ \
+    transferToSpecialty(newSpecialty: _Specialty_): _void_ \
+    transferToPaid(): _void_ \
+    viewCompetition(basis: _StudyBasis_): _Competition_ \
+    viewEnrollment(): _Enrollment_],
+      [Application (Документы)],
+    [submissionDate: _Date_ \
+    basis: _StudyBasis_],
+    [—],
+      [Deadline (Срок)],
+    [type: _DeadlineType_ \
+    startDate: _Date_ \
+    endDate: _Date_],
+    [—],
+      [TechnicalSecretary (Технический секретарь)],
+    [—],
+    [registerApplicant(fullName: _String_, averageCertificateScore: _Double_): _Applicant_ \
+    issueCredentials(applicant: _Applicant_): _void_],
+      [ExamResult (Результат экзамена)],
+    [score: _Integer_],
+    [isPassed(minScore: _Integer_): _Boolean_],
+      [Competition (Конкурс)],
+    [basis: _StudyBasis_ \
+    passingScore: _Integer_ \
+    shortfall: _Integer_],
+    [isAdmitted(applicant: _Applicant_, minScore: _Integer_): _Boolean_ \
+    calculateTotalScore(applicant: _Applicant_): _Integer_ \
+    compare(a: _Applicant_, b: _Applicant_): _Integer_ \
+    conductEnrollment(minScore: _Integer_): _List\<Enrollment\>_],
+      [Enrollment (Зачисление)],
+    [isManual: _Boolean_ \
+    reason: _String_],
+    [—],
+      [CommitteeSecretary (Секретарь приёмной комиссии)],
+    [—],
+    [enrollManually(applicant: _Applicant_, reason: _String_): _Enrollment_ \
+    redistributePlaces(source: _Specialty_, target: _Specialty_, basis: _StudyBasis_, count: _Integer_): _void_],
     )
 ]
-
+/*
 *Шаг №2.3 Ассоциации и кратности полюсов*
 
 1\. University [1] — [1..\*] Faculty (“включает” — Агрегация; направление University → Faculty; триплет 1). В университете минимум один факультет; факультет принадлежит одному университету.
@@ -179,3 +179,5 @@
 7\. University ⇢ DeadlineType, Deadline ⇢ DeadlineType («use»). Вид срока задаётся перечислением «DeadlineType» (триплет 8).
 
 8\. Applicant, Application, Competition, EnrollmentPlan, CommitteeSecretary ⇢ StudyBasis («use»). Форма обучения (бюджет / внебюджет) задаётся перечислением «StudyBasis» (триплеты 3, 16, 18, 24, 29).
+
+*/
