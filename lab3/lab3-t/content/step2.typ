@@ -82,6 +82,15 @@
       fill: (_, y) => if y == 0 { rgb("#e6e6e6") },
       [*Класс*], [*Атрибуты*], [*Методы*],
 
+      [Account (Аккаунт) «abstract»],
+      [userId: _Long_ \
+      login: _String_ \
+      password: _String_],
+      [getUserId(): _Long_ \
+      getLogin(): _String_ \
+      getPassword(): _String_ \
+      regeneratePassword(): _String_],
+
       [University (Университет) < CompetitionAnalyzable],
       [name: _String_ \
       faculties: _List\<Faculty\>_],
@@ -148,7 +157,7 @@
       isProfile(): _boolean_ \
       setProfile(flag: _boolean_): _void_],
 
-      [Abiturient (Абитуриент)],
+      [Abiturient (Абитуриент) < Account],
       [fullName: _String_ \
       averageMark: _double_ \
       documents: _List\<Documents\>_ \
@@ -240,26 +249,15 @@
       calculateShortfall(): _Places_ \
       calculateTotalParticipants(): _int_],
 
-      [TechnicalSecretary (Технический секретарь)],
+      [TechnicalSecretary (Технический секретарь) < Account],
       [fullName: _String_],
-      [registerAbiturient(a: _Abiturient_): _void_ \
-      issueCredentials(a: _Abiturient_): _Credentials_ \
-      getCredentialsOf(a: _Abiturient_): _Credentials_],
+      [registerAbiturient(fullName: _String_, averageMark: _double_): _Abiturient_ ],
 
-      [AdmissionSecretary (Секретарь приёмной комиссии)],
+      [AdmissionSecretary (Секретарь приёмной комиссии) < Account],
       [fullName: _String_],
       [manualEnroll(a: _Abiturient_, s: _Speciality_, basis: _StudyBasis_, reason: _String_): _Enrollment_ \
       redistributePlaces(from: _Places_, to: _Places_, n: _int_): _void_ \
       publishEnrollmentResults(s: _Speciality_): _void_],
-
-      [Credentials (Учётные данные) _value object_],
-      [userId: _Long_ \
-      login: _String_ \
-      password: _String_],
-      [getUserId(): _Long_ \
-      getLogin(): _String_ \
-      getPassword(): _String_ \
-      regeneratePassword(): _String_],
     )
 ]
 #[
