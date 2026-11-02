@@ -2,7 +2,7 @@
 // #import "conf.typ" : turn-on-first-line-indentation
 #show: conf.with(
   title: [Тема работы],
-  type: "nir",
+  type: "otchet",
   info: (
       author: (
         name: [Гожевой Анастасии Дмитриевны],

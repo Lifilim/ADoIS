@@ -29,6 +29,7 @@
       diploma: [Выпускная квалификационная работа],
       autoref: [работа],
       nir: [работа],
+      otchet: [отчет],
       pract: [Отчёт о практике],
     ),
     from_course: "курса",
@@ -323,11 +324,15 @@
      *    - В противном случае названия соответствующих типов работ
      */
     _get_title_string: info => {
-      if info.type == "autoref" {
+if info.type == "autoref" {
         return [АВТОРЕФЕРАТ]
       }
       if info.type == "nir" {
         return [ОТЧЁТ О НАУЧНО-ИССЛЕДОВАТЕЛЬСКОЙ РАБОТЕ]
+      }
+      if info.type == "otchet" {
+        // return [Отчет]
+        return info.at("title", default: [Тема работы])
       }
       return info.at("title", default: [Тема работы])
     },
