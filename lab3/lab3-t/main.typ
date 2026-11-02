@@ -26,7 +26,7 @@
 )
 
 #include "content/01_task.typ"
-#include "content/variant.typ"
+#include "content/02_myvar.typ"
 #include "content/step1.typ"
 #include "content/step2.typ"
 #include "content/step3.typ"
