@@ -1,51 +1,101 @@
 = #underline[*ШАГ №6 В некоторых случаях объекты предметной области обладают собственным поведением. Для описания их поведения следует составить диаграмму состояний. Важно показать состояния, события и условия переходов.*]
 
-Собственное поведение у двух объектов: заявления абитуриента и срока. Состояния не являются значениями перечисления, поэтому записаны по-русски строчными буквами; на стрелках указаны методы-события и условия.
+*Шаг №6.1 Диаграмма состояний для класса Documents (Заявление)*
 
-*Шаг №6.1 Диаграмма состояний заявления (Application), код PlantUML*
-
+#image("/assets/lab3-Documents.png", width: 80%)
+/*
 ```plantuml
 @startuml
-hide empty description
-skinparam defaultFontName "Liberation Sans"
-state "подано" as submitted : getResults()
-state "допущено к конкурсу" as admitted : calculateTotalScore()
-state "не допущено" as notAdmitted
-state "ожидает ручного решения" as pending
-state "зачислено" as enrolled
-state "не зачислено" as notEnrolled
+skinparam linetype ortho
+skinparam shadowing false
+skinparam state {
+  BackgroundColor #FEFECE
+  BorderColor #A80036
+  ArrowColor #333333
+}
 
-[*] --> submitted : registerApplicant(...)\n[срок подачи документов действует]
-submitted --> admitted : isAdmitted(minScore)\n[сданы все экзамены, все баллы ≥ minScore]
-submitted --> notAdmitted : isAdmitted(minScore)\n[есть балл < minScore]
-admitted --> admitted : changeSpecialty(newSpecialty) /\nchangeBasis(newBasis)\n[срок зачисления не наступил]
-admitted --> enrolled : conductCompetition(minScore)\n[проходит по баллам]
-admitted --> notEnrolled : conductCompetition(minScore)\n[мест не хватило]
-admitted --> pending : conductCompetition(minScore)\n[равенство баллов, профильного\nпредмета и среднего балла аттестата]
-pending --> enrolled : enrollManually(application, reason)
-pending --> enrolled : redistributePlaces(...)\n[места перераспределены]
-pending --> notEnrolled : enrollManually(application, reason)\n[выбран другой абитуриент]
-notAdmitted --> [*]
-enrolled --> [*]
-notEnrolled --> [*]
+[*] --> SUBMITTED : Создание заявления\n(абитуриент подал документы)
+SUBMITTED --> ACCEPTED : Проверка документов\n[сроки соблюдены и данные верны]
+SUBMITTED --> WITHDRAWN : Отзыв документов\n[до начала конкурса]
+
+ACCEPTED --> WITHDRAWN : Отзыв документов\n[до срока зачисления]
+ACCEPTED --> TRANSFERRED : Перевод на другую\nспециальность (UC10)\n[совпадают экзамены]
+
+ACCEPTED --> ENROLLED : Успешное прохождение\nконкурса (UC7)\n[проходит по баллам]
+TRANSFERRED --> ENROLLED : Успешное прохождение\nконкурса на новой\nспециальности
+
+WITHDRAWN --> [*]
+ENROLLED --> [*]
+
 @enduml
 ```
+*/
 
-*Шаг №6.2 Диаграмма состояний срока (Deadline), код PlantUML*
 
-```plantuml
+*Шаг №6.2 Диаграмма состояний для класса Competition (Конкурс)*
+
+#image("/assets/lab3-Competition.png", width: 80%)
+
+/*
+```
 @startuml
-hide empty description
-skinparam defaultFontName "Liberation Sans"
-state "запланирован" as planned : isActive(date) = false
-state "действует" as active : isActive(date) = true
-state "завершён" as finished : isActive(date) = false
+skinparam linetype ortho
+skinparam shadowing false
+skinparam state {
+  BackgroundColor #FEFECE
+  BorderColor #A80036
+  ArrowColor #333333
+}
 
-[*] --> planned : setDeadline(type, startDate, endDate)
-planned --> planned : setDeadline(type, startDate, endDate)\n[изменение границ срока]
-planned --> active : isActive(date)\n[наступила startDate]
-active --> active : setDeadline(type, startDate, endDate)\n[новая endDate позже текущей]
-active --> finished : isActive(date)\n[наступила endDate]
-finished --> [*]
+[*] --> PREPARING : Начало конкурса\n(наступил срок зачисления)
+
+PREPARING --> RANKING : Сбор заявлений\nзавершён
+PREPARING --> RANKING : Нет участников\n(недобор = все места)
+
+RANKING --> TIE_RESOLVING : Обнаружено равенство\nбаллов на границе мест
+TIE_RESOLVING --> RANKING : Автоматический тай-брейк\n(профильный предмет / аттестат)
+TIE_RESOLVING --> MANUAL_WAIT : Тай-брейк не сработал\n(нужно ручное решение)
+
+MANUAL_WAIT --> RANKING : Секретарь ПК\nвручную зачислил (UC4)\n[указана причина]
+
+RANKING --> COMPLETED : Все места заполнены\nили участники закончились
+COMPLETED --> [*]
+
 @enduml
 ```
+*/
+
+
+*Шаг №6.3 Диаграмма состояний для класса Abiturient (Абитуриент)*
+
+#image("/assets/lab3-Abiturient.png", width: 80%)
+
+
+/*
+```
+@startuml
+skinparam linetype ortho
+skinparam shadowing false
+skinparam state {
+  BackgroundColor #FEFECE
+  BorderColor #A80036
+  ArrowColor #333333
+}
+
+[*] --> REGISTERED : Регистрация\n(Технический секретарь, UC1)
+
+REGISTERED --> APPLIED : Подача документов\nна специальность (UC6)
+APPLIED --> EXAMINED : Внесение результатов\nвсех экзаменов (UC14)\n[все экзамены сданы]
+
+EXAMINED --> ENROLLED : Успешное прохождение\nконкурса (UC7)
+EXAMINED --> NOT_ENROLLED : Не проходит по конкурсу\n(баллов не хватило)
+
+NOT_ENROLLED --> APPLIED : Перевод на другую\nспециальность (UC10)\n[совпадают экзамены]
+NOT_ENROLLED --> APPLIED : Перевод на внебюджет\n(UC10)\n[есть места]
+
+ENROLLED --> [*]
+NOT_ENROLLED --> [*]
+
+@enduml
+```
+*/
