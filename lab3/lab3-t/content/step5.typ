@@ -1,44 +1,84 @@
 = #underline[*ШАГ №5 Провести анализ взаимодействий, описанных в вариантах использования. Для каждого варианта использования нужно проработать, какие классы будут участвовать в его реализации и какие обязанности они будут иметь.*]
 
-#table(
-  columns: (4.60fr, 12.40fr),
-  inset: 5pt,
-  stroke: 0.5pt + black,
-  fill: (_, y) => if y == 0 { rgb("#e6e6e6") },
-  [*Вариант использования*],
-  [*Участвующие классы и их обязанности*],
-  [UC-1 Войти в систему],
-  [Applicant, Secretary – authenticate() сверяет login и passwordHash. Подкласс секретаря определяет роль и доступные функции.],
-  [UC-2 Зарегистрировать абитуриента],
-  [TechnicalSecretary – registerApplicant(): создаёт Applicant и Application; University – isDeadlineActive(DOCUMENTS, date) проверяет срок подачи (через Deadline.isActive()); Specialty – принимает заявление; для PAID – occupyPlace() → EnrollmentPlan.],
-  [UC-3 Сообщить данные для авторизации],
-  [TechnicalSecretary – issueCredentials(): задаёт login и passwordHash абитуриента и возвращает пароль для передачи.],
-  [UC-4 Ввести результаты экзаменов],
-  [TechnicalSecretary – enterExamResult(): создаёт ExamResult в заявлении абитуриента (Application → ExamResult); проверяет, что экзамен входит в набор специальности (Specialty.getExams()). ExamResult – хранит score.],
-  [UC-5 Управлять специальностями и планом набора],
-  [CommitteeSecretary – changeEnrollmentPlan() → EnrollmentPlan.setPlaces(). Faculty, Specialty, Exam, SpecialtyExam хранят справочные данные; SpecialtyExam – признак isProfile.],
-  [UC-6 Установить сроки],
-  [CommitteeSecretary → University.setDeadline(): создаёт или изменяет Deadline нужного вида (DOCUMENTS, EXAMS, ENROLLMENT).],
-  [UC-7 Назначить даты экзаменов],
-  [CommitteeSecretary – scheduleExam() → Exam.assignDate(): записывает examDate.],
-  [UC-8 Просмотреть расписание экзаменов],
-  [Applicant.viewExamSchedule() → Application.getExams() → Specialty.getExams() → SpecialtyExam.getExam(); дата берётся из Exam.examDate.],
-  [UC-9 Просмотреть результаты экзаменов],
-  [Applicant.viewExamResults() → Application.getResults(): возвращает только результаты данного абитуриента (ExamResult.score).],
-  [UC-10 Просмотреть положение в конкурсе],
-  [Applicant.checkCompetitionStatus(minScore) → Application.isAdmitted(minScore) и Specialty.isPassing(): рейтинг строится по Application.compareTo(); число бюджетных мест – EnrollmentPlan.],
-  [UC-11 Перевестись на другую специальность],
-  [Applicant.transferToSpecialty(): проверяет University.isDeadlineActive(ENROLLMENT, date) (перевод возможен, пока срок зачисления не наступил) и вызывает Application.changeSpecialty(): Specialty.hasSameExams() сравнивает наборы экзаменов.],
-  [UC-12 Перевестись на внебюджет],
-  [Applicant.transferToPaid() → Application.changeBasis(PAID): Specialty.hasFreePlaces(PAID) → EnrollmentPlan.getFreePlaces(); затем occupyPlace().],
-  [UC-13 Провести зачисление],
-  [CommitteeSecretary.conductEnrollment(minScore) → University → Faculty → Specialty.conductCompetition(): допуск Application.isAdmitted() (все экзамены не ниже minScore), сумма Application.calculateTotalScore(), зачисление до заполнения EnrollmentPlan, создание Enrollment, пересчёт Competition.],
-  [UC-14 Сформировать рейтинг специальности],
-  [Specialty.conductCompetition() сортирует заявления через Application.compareTo(): сумма баллов, затем getProfileScore() (профильный экзамен – Specialty.getProfileExam()), затем средний балл аттестата (Applicant).],
-  [UC-15 Зачислить вручную],
-  [CommitteeSecretary.enrollManually(application, reason): создаёт Enrollment с isManual = true и reason; Specialty.occupyPlace().],
-  [UC-16 Перераспределить места],
-  [CommitteeSecretary.redistributePlaces(): Specialty.hasFreePlaces() у источника, changePlaces(basis, −count) у источника и (basis, +count) у приёмника; затем повторное Specialty.conductCompetition().],
-  [UC-17 Просмотреть итоги зачисления],
-  [Applicant, CommitteeSecretary → University.getEnrolledApplicants() и getCompetition(basis) (вниз по Faculty и Specialty); Competition – проходной балл, недобор, calculateRatio().],
-)
+
+#[
+  #set par(first-line-indent: 0pt, hanging-indent: 0pt, justify: false, leading: 0.5em, spacing: 0.5em)
+  #show regex("[a-z][A-Z]"): it => [#it.text.first()#sym.zws#it.text.last()]
+  #table(
+      columns: (4.2fr, 4.5fr, 7.3fr),
+      inset: (x: 4pt, y: 4pt),
+      align: left + top,
+      stroke: 0.5pt + black,
+      fill: (_, y) => if y == 0 { rgb("#e6e6e6") },
+      [*ВИ*], [*Класс*], [*Обязанности в данном ВИ*],
+
+      [*UC1. Зарегистрировать абитуриента*], 
+      [TechnicalSecretary], [Создаёт аккаунт абитуриента, генерирует логин и пароль],
+      [], [Abiturient], [Хранит персональные данные; получает учётные данные при создании],
+      [], [Account], [Хранит `userId`, `login`, `password`; предоставляет методы доступа],
+
+      [*UC2. Установить сроки*], 
+      [AdmissionSecretary], [Задаёт даты подачи, сдачи экзаменов и зачисления],
+      [], [Speciality], [Хранит план (`Places`); принимает изменения количества мест],
+      [], [Exam, Documents, Enrollment], [Хранят соответствующие сроки (сдачи, подачи, зачисления)],
+
+      [*UC3. Назначить экзамены*], 
+      [AdmissionSecretary], [Добавляет экзамен специальности с указанием профильности и даты],
+      [], [Speciality], [Хранит список экзаменов; добавляет `SpecialityExam`],
+      [], [SpecialityExam], [Связывает специальность и экзамен, хранит признак профильности],
+      [], [Exam], [Хранит название и дату сдачи],
+
+      [*UC4. Ручное зачисление*], 
+      [AdmissionSecretary], [Инициирует зачисление при равенстве баллов, указывает причину],
+      [], [Competition], [Выявляет равенство баллов, передаёт управление],
+      [], [Enrollment], [Создаёт запись о зачислении с флагом `isManual` и причиной],
+
+      [*UC5. Перераспределить места*], 
+      [AdmissionSecretary], [Инициирует перераспределение мест при недоборе],
+      [], [Places], [Уменьшает/увеличивает количество мест],
+      [], [CompetitionSummary], [Выявляет недобор по уровням и возвращает его],
+
+      [*UC6. Подать документы*], 
+      [Abiturient], [Создаёт заявление на выбранную специальность, фиксирует дату],
+      [], [Documents], [Хранит заявление, проверяет сроки подачи и статус],
+      [], [Speciality], [Предоставляет данные о специальности],
+
+      [*UC7. Провести конкурс и зачисление*], 
+      [Competition], [Собирает участников, ранжирует по баллам, применяет тай-брейки, рассчитывает проходной балл и недобор],
+      [], [Documents, ExamResult], [Предоставляют статус заявления и баллы для ранжирования],
+      [], [Places, Enrollment], [План используется для расчёта недобора; создаются записи о зачислении],
+
+      [*UC8. Рассчитать проходной балл и недобор*], 
+      [Competition], [Вычисляет проходной балл (балл последнего зачисленного) и недобор],
+      [], [CompetitionSummary], [Агрегирует недобор и проходной балл по уровням],
+
+      [*UC9. Проверить статус в конкурсе*], 
+      [Abiturient], [Запрашивает свой статус и место в рейтинге],
+      [], [Competition], [Возвращает статус (`getStatusFor`) и место (`getRankOf`)],
+
+      [*UC10. Перевестись*], 
+      [Abiturient], [Инициирует перевод на другую специальность или внебюджет],
+      [], [Speciality], [Проверяет совпадение экзаменов и наличие мест],
+      [], [Documents], [Меняет специальность в заявлении, обновляет статус],
+
+      [*UC11. Расписание экзаменов*], 
+      [Abiturient], [Запрашивает расписание],
+      [], [Speciality, SpecialityExam, Exam], [Предоставляют список экзаменов и даты сдачи],
+
+      [*UC12. Свои результаты*], 
+      [Abiturient], [Запрашивает свои результаты],
+      [], [ExamResult], [Возвращает баллы и статус сдачи],
+
+      [*UC13. Списки и проходные баллы*], 
+      [Abiturient], [Запрашивает списки зачисленных и проходные баллы],
+      [], [AdmissionSecretary], [Публикует результаты],
+      [], [Competition, Enrollment], [Предоставляют проходные баллы и списки зачисленных],
+
+      [*UC14. Внести результаты*], 
+      [TechnicalSecretary], [Вносит баллы абитуриентов],
+      [], [ExamResult], [Хранит балл по экзамену],
+
+      [*UC15. Авторизация*], 
+      [Account], [Проверяет логин и пароль],
+    )
+]
